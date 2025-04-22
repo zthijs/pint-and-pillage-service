@@ -8,6 +8,7 @@ import nl.duckstudios.pintandpillage.entity.production.ShipUnit;
 import nl.duckstudios.pintandpillage.helper.UnitFactory;
 import nl.duckstudios.pintandpillage.model.AttackUnitData;
 import nl.duckstudios.pintandpillage.model.AttackVillageData;
+import nl.duckstudios.pintandpillage.model.UnitType;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class CombatService {
         List<VillageUnit> attackingUnits = new ArrayList<>();
 
         for (AttackUnitData attackUnitData : data.units) {
-            VillageUnit unitIntList = attackingUnits.stream().filter(a -> a.getUnit().getUnitName() == attackUnitData.unitType).findFirst().orElse(null);
+            VillageUnit unitIntList = attackingUnits.stream().filter(a -> a.getUnit().getUnitName().equals(attackUnitData.unitType.name())).findFirst().orElse(null);
             if (unitIntList != null) {
                 unitIntList.setAmount(unitIntList.getAmount() + attackUnitData.amount);
                 continue;
@@ -55,7 +56,7 @@ public class CombatService {
                         .getShipCapacity()).sum();
 
         int totalUnitCapacity = villageUnits.stream()
-                .filter(u -> !(u.getUnit() instanceof Scout) && (u.getUnit() instanceof ShipUnit))
+                .filter(u -> !(u.getUnit() instanceof Scout) && !(u.getUnit() instanceof ShipUnit))
                 .mapToInt(u -> u.getUnit().getPopulationRequiredPerUnit() * u.getAmount()).sum();
 
         if (totalShipCapacity < totalUnitCapacity) {
